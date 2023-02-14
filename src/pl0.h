@@ -4,7 +4,7 @@ typedef enum {
   true
 } bool;
 
-#define norw 13
+#define norw 13  // 关键字个数
 #define txmax 100
 #define nmax 14
 #define al 10
@@ -57,13 +57,13 @@ int cx;
 char line[81];
 char a[al+1];
 struct instruction code[cxmax];
-char word[norw][al];
-enum symbol wsym[norw];
-enum symbol ssym[256];
-char mnemonic[fctnum][5];
-bool declbegsys[symnum];
-bool statbegsys[symnum];
-bool facbegsys[symnum];
+char word[norw][al];  // 保留字，用于程序解析
+enum symbol wsym[norw];  // 保留字对应的符号值
+enum symbol ssym[256];  // 单字符对应的符号值
+char mnemonic[fctnum][5];  // 虚拟机代码指令名称，用作指令打印
+bool declbegsys[symnum];  // 声明开始的符号集合 ("const", "var", "procedure")
+bool statbegsys[symnum];  // 语句开始的符号集合 ("begin", "call", "if", "while")
+bool facbegsys[symnum];  // 因子开始的符号集合 (ident, number, "(")
 
 struct tablestruct
 {
