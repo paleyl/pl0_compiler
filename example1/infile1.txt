@@ -1,0 +1,11 @@
+var x, y;
+procedure multiply;
+begin
+write(x * y)
+end;
+begin
+x := 19;
+y := 29;
+write(x + y, x, y);
+call multiply
+end.
