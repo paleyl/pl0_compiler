@@ -8,8 +8,10 @@ int compile(char* infile) {
   bool nxtlev[symnum];
   listswitch = true;
   tableswitch = true;
-  fin = fopen("infile1.txt", "r");
+  fin = fopen(infile, "r");
   fa1 = fopen("fa1.tmp", "w");
+  fstack = fopen("fstack.tmp", "w");
+  FILE* fcode = fopen("fcode.tmp", "w");
   init();
   err = 0;
   cc = cx = ll = 0;
@@ -28,6 +30,8 @@ int compile(char* infile) {
       printf("\n");
       return 0;
     }
+    listcode(0, fcode);
+    fclose(fcode);
     fclose(fa);
     fclose(fa1);
     fclose(fas);
@@ -402,7 +406,6 @@ int block(int lev, int tx, bool* fsys) {
         printf("lev = %d addr = %d size = %d\n", table[i].level, table[i].adr, table[i].size);
         fprintf(fas, "%d proc %s, ", i, table[i].name);
         fprintf(fas, "lev = %d addr = %d size = %d\n", table[i].level, table[i].adr, table[i].size);
-      default:
         break;
       }
     }
@@ -415,7 +418,7 @@ int block(int lev, int tx, bool* fsys) {
   gendo(opr, 0, 0);
   memset(nxtlev, 0, sizeof(bool) * symnum);
   testdo(fsys, nxtlev, 3);
-  listcode(cx0);
+  listcode(cx0, fa);
   return 0;
 }
 #endif  // COMPLETE1
@@ -486,12 +489,12 @@ int vardeclaration(int* ptx, int lev, int* pdx) {
   return 0;
 }
 
-void listcode(int cx0) {
+void listcode(int cx0, FILE* fout) {
   int i;
   if (listswitch) {
     for (i = cx0; i < cx; i++) {
       printf("%d %s %d %d\n", i, mnemonic[code[i].f], code[i].l, code[i].a);
-      fprintf(fa, "%d %s %d %d\n", i, mnemonic[code[i].f], code[i].l, code[i].a);
+      fprintf(fout, "%d %s %d %d\n", i, mnemonic[code[i].f], code[i].l, code[i].a);
     }
   }
 }
@@ -825,8 +828,10 @@ void interpret() {
   b = 0;
   p = 0;
   s[0] = s[1] = s[2] = 0;
+  int p0;  // for debug only
   do {
     i = code[p];
+    p0 = p;
     p++;
     switch (i.f) {
       case lit:
@@ -932,6 +937,15 @@ void interpret() {
         }
         break;
     }
+    // print stack
+    fprintf(fstack, "%d: %s %d %d:", p0, mnemonic[i.f], i.l, i.a);
+    int _iter;
+    for (_iter = 0; _iter < t; ++_iter) {
+      fprintf(fstack, "[%d]%d,", _iter, s[_iter]);
+    }
+    fprintf(fstack, "%d", b);
+    fprintf(fstack, "\n");
+    // print stack
   } while(p != 0);
 }
 
@@ -978,6 +992,6 @@ int main(int argc, char** argv) {
     printf("No input file specified\n");
     return 1;
   }
-  compile(argv[0]);
+  compile(argv[1]);
   return 0;
 }
