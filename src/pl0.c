@@ -4,6 +4,17 @@
 
 #define stacksize 500
 
+void error1(int n, int line, char* file) {
+  char space[81];
+  memset(space, 32, 81);
+  space[cc - 1] = 0;
+  printf("****%s error %d at [%s] %d\n", space, n, file, line);
+  fprintf(fa1, "****%s error %d at [%s] %d\n", space, n, file, line);
+  err++;
+}
+
+# define error(n) error1(n, __LINE__, __FILE__)
+
 int compile(char* infile) {
   bool nxtlev[symnum];
   listswitch = true;
@@ -147,17 +158,6 @@ int mulset(bool* sr, bool* s1, bool* s2, int n) {
   }
   return 0;
 }
-
-void error1(int n, int line, char* file) {
-  char space[81];
-  memset(space, 32, 81);
-  space[cc - 1] = 0;
-  printf("****%s error %d at [%s] %d\n", space, n, file, line);
-  fprintf(fa1, "****%s error %d at [%s] %d\n", space, n, file, line);
-  err++;
-}
-
-# define error(n) error1(n, __LINE__, __FILE__) 
 
 int getch() {
   if (cc == ll) {
